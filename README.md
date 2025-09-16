@@ -43,6 +43,10 @@ For a URDF-only visualization in RViz:
 ros2 launch delivbot display.launch.py
 ```
 
+### Joystick usage in simulation
+- Enable/drive with left trigger (button 6) held.
+- Turbo speed with right trigger (button 7).
+
 ## Real Robot Bring-Up
 
 `robot.launch.py` runs the physical robot stack while keeping Gazebo assets untouched. It loads the URDF, publishes TFs, launches joystick teleop, and can selectively start the hardware drivers.
@@ -57,6 +61,10 @@ ros2 launch delivbot robot.launch.py \
 ```
 
 Joystick commands flow through `twist_mux` so `/cmd_vel_joy` and navigation topics are arbitrated automatically before reaching the ODrive driver (default `/cmd_vel`).
+
+### Joystick usage on hardware
+- Enable/drive with left shoulder (button 4) held.
+- Turbo speed with right shoulder (button 5).
 
 ### Common Launch Arguments
 

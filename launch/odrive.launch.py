@@ -21,6 +21,10 @@ def launch_setup(context, *args, **kwargs):
     if params_file:
         parameters.append(os.path.expanduser(params_file))
 
+    remappings = []
+    if cmd_vel_topic:
+        remappings.append(('/cmd_vel', cmd_vel_topic))
+
     odrive_node = Node(
         package='odrive_hoverboard',
         executable='driver',
@@ -28,6 +32,7 @@ def launch_setup(context, *args, **kwargs):
         name=node_name,
         output='screen',
         parameters=parameters,
+        remappings=remappings,
     )
 
     return [odrive_node]

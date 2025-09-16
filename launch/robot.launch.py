@@ -38,6 +38,7 @@ def generate_launch_description():
     pkg_share = get_package_share_directory('delivbot')
     default_model = os.path.join(pkg_share, 'urdf', 'delivbot.xacro')
     twist_mux_params = os.path.join(pkg_share, 'config', 'twist_mux.yaml')
+    joystick_x_mode_params = os.path.join(pkg_share, 'config', 'joystick_x_mode.yaml')
 
     declare_namespace = DeclareLaunchArgument(
         'robot_namespace',
@@ -81,6 +82,18 @@ def generate_launch_description():
         description='Launch joystick teleop for manual control when true.'
     )
 
+    declare_joy_dev = DeclareLaunchArgument(
+        'joy_dev',
+        default_value='/dev/input/f710-joystick',
+        description='Joystick device path (e.g., /dev/input/f710-joystick). If empty, joystick.yaml device_id is used.'
+    )
+
+    declare_joystick_params = DeclareLaunchArgument(
+        'joystick_params_file',
+        default_value=joystick_x_mode_params,
+        description='YAML parameters file for joystick (defaults to X-mode config).'
+    )
+
     declare_lidar_params = DeclareLaunchArgument(
         'lidar_params_file',
         default_value='',
@@ -113,6 +126,8 @@ def generate_launch_description():
         declare_launch_realsense,
         declare_launch_odrive,
         declare_launch_joystick,
+        declare_joy_dev,
+        declare_joystick_params,
         declare_lidar_params,
         declare_realsense_params,
         declare_odrive_params,
@@ -167,6 +182,8 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('launch_joystick')),
         launch_arguments={
             'use_sim_time': use_sim_time,
+            'joy_dev': LaunchConfiguration('joy_dev'),
+            'params_file': LaunchConfiguration('joystick_params_file'),
         }.items(),
     )
 
