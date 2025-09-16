@@ -1,0 +1,34 @@
+controller_manager:
+  ros__parameters:
+    use_sim_time: true # remove for release! (needs to be a launch arg)
+    update_rate: 50
+
+    diff_drive_controller:
+      type: diff_drive_controller/DiffDriveController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+diff_drive_controller:
+  ros__parameters:
+    use_sim_time: true # remove for release! (needs to be a launch arg)
+    left_wheel_names: ["Lwheel"]
+    right_wheel_names: ["Rwheel"]
+    wheel_separation: 0.70
+    wheel_radius: 0.16
+    use_stamped_vel: false
+    publish_rate: 50.0
+    base_frame_id: base_link
+    odom_frame_id: odom
+    enable_odom_tf: true
+    cmd_vel_timeout: 0.5
+    linear:
+      x:
+        has_velocity_limits: true
+        min_velocity: -3.0
+        max_velocity: 3.0
+    angular:
+      z:
+        has_velocity_limits: true
+        min_velocity: -3.0
+        max_velocity: 3.0

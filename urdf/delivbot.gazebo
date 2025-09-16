@@ -1,0 +1,154 @@
+<?xml version="1.0" ?>
+<robot name="delivbot" xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+<!-- Gazebo material and friction settings -->
+<xacro:property name="body_color_gz" value="Gazebo/White" />
+<xacro:property name="other_color_gz" value="Gazebo/Black" />
+
+<!-- Friction coefficients (mu1, mu2) -->
+<!-- High grip for drive wheels to avoid sliding -->
+<xacro:property name="wheel_mu" value="1.2" />
+<xacro:property name="wheel_mu2" value="1.2" />
+<!-- Very low friction for casters so they slide freely -->
+<xacro:property name="caster_mu" value="0.05" />
+<xacro:property name="caster_mu2" value="0.05" />
+<!-- Default for the main body and non-contacting parts -->
+<xacro:property name="body_mu" value="0.2" />
+<xacro:property name="body_mu2" value="0.2" />
+
+<gazebo>
+  <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+    <parameters>$(find delivbot)/config/ros2_control.yaml</parameters>
+  </plugin>
+</gazebo>
+
+<gazebo reference="base_link">
+  <material>${body_color_gz}</material>
+  <mu1>${body_mu}</mu1>
+  <mu2>${body_mu2}</mu2>
+  <self_collide>false</self_collide>
+  <gravity>true</gravity>
+  <!-- Consider disabling self_collide on chassis if issues arise -->
+</gazebo>
+
+<gazebo reference="lidar_1">
+  <material>${other_color_gz}</material>
+  <mu1>${body_mu}</mu1>
+  <mu2>${body_mu2}</mu2>
+  <self_collide>false</self_collide>
+  <!-- 3D lidar sensor -->
+  <sensor name="lidar_1" type="gpu_lidar">
+    <pose>0 0 0 0 0 0</pose>
+    <visualize>true</visualize>
+    <always_on>true</always_on>
+    <update_rate>10</update_rate>
+    <topic>/lidar/points</topic>
+    <frame>lidar_1</frame>
+    <frame_id>lidar_1</frame_id>
+
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>2048</samples>
+          <resolution>1</resolution>
+          <min_angle>-3.14159</min_angle>
+          <max_angle>3.14159</max_angle>
+        </horizontal>
+        <vertical>
+          <samples>128</samples>
+          <resolution>1</resolution>
+          <min_angle>-0.9163</min_angle>
+          <max_angle>0.9163</max_angle>
+        </vertical>
+      </scan>
+      <range>
+        <min>0.2</min>
+        <max>25.0</max>
+        <resolution>0.01</resolution>
+      </range>
+      <output_type>point_cloud</output_type>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.01</stddev>
+      </noise>
+    </ray>
+  </sensor>
+</gazebo>
+
+<gazebo reference="Lwheel_1">
+  <material>${other_color_gz}</material>
+  <mu1>${wheel_mu}</mu1>
+  <mu2>${wheel_mu2}</mu2>
+  <self_collide>false</self_collide>
+</gazebo>
+
+<gazebo reference="Rwheel_1">
+  <material>${other_color_gz}</material>
+  <mu1>${wheel_mu}</mu1>
+  <mu2>${wheel_mu2}</mu2>
+  <self_collide>false</self_collide>
+</gazebo>
+
+<gazebo reference="Rcastor_1">
+  <material>${other_color_gz}</material>
+  <mu1>${caster_mu}</mu1>
+  <mu2>${caster_mu2}</mu2>
+  <self_collide>false</self_collide>
+  <slip1>0.5</slip1>
+  <slip2>0.5</slip2>
+</gazebo>
+
+<gazebo reference="Lcastor_1">
+  <material>${other_color_gz}</material>
+  <mu1>${caster_mu}</mu1>
+  <mu2>${caster_mu2}</mu2>
+  <self_collide>false</self_collide>
+  <slip1>0.5</slip1>
+  <slip2>0.5</slip2>
+</gazebo>
+
+<gazebo reference="realsense_1">
+  <material>${other_color_gz}</material>
+  <mu1>${body_mu}</mu1>
+  <mu2>${body_mu2}</mu2>
+  <self_collide>false</self_collide>
+  <!-- RGB-D camera approximating an Intel RealSense -->
+  <sensor name="realsense_1" type="rgbd_camera">
+    <pose>0 0 0 0 0 0</pose>
+    <visualize>true</visualize>
+    <always_on>true</always_on>
+    <update_rate>30</update_rate>
+
+    <topic>/realsense/image</topic>
+    <frame>realsense_1</frame>
+    <frame_id>realsense_1</frame_id>
+    <camera>
+      <horizontal_fov>1.501</horizontal_fov>
+      <image>
+        <width>1280</width>
+        <height>720</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.3</near>
+        <far>10.0</far>
+      </clip>
+    </camera>
+
+    <depth_camera>
+      <topic>/realsense/depth_image</topic>
+      <clip>
+        <near>0.3</near>
+        <far>10.0</far>
+      </clip>
+    </depth_camera>
+
+    <camera_info_topic>/realsense/camera_info</camera_info_topic>
+    <depth_camera_info_topic>/realsense/depth_camera_info</depth_camera_info_topic>
+    <point_cloud_topic>/realsense/points</point_cloud_topic>
+    <point_cloud_cutoff>0.3</point_cloud_cutoff>
+  </sensor>
+</gazebo>
+
+</robot>

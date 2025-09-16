@@ -1,0 +1,197 @@
+<?xml version="1.0" ?>
+<robot name="delivbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find delivbot)/urdf/materials.xacro" />
+<xacro:include filename="$(find delivbot)/urdf/delivbot.ros2control" />
+<xacro:include filename="$(find delivbot)/urdf/delivbot.gazebo" />
+
+<!-- Scale masses and inertias to target a realistic robot weight.
+     Original total mass approximately 763.554 kg from CAD export.
+     Target total mass approximately 25.0 kg (small child), so scale about 0.0327416. -->
+<xacro:property name="mass_scale" value="0.03274160729079842"/>
+<link name="base_link">
+  <inertial>
+    <origin xyz="0.32841545472274736 0.17499999999999993 0.31803039127731625" rpy="0 0 0"/>
+    <mass value="${mass_scale * 740.1624907814697}"/>
+    <inertia ixx="${mass_scale * 17.958055}" iyy="${mass_scale * 37.222212}" izz="${mass_scale * 33.935393}" ixy="${mass_scale * 0.0}" iyz="${mass_scale * -0.0}" ixz="${mass_scale * 0.151875}"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="white"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lidar_1">
+  <inertial>
+    <origin xyz="6.661338147750939e-16 -1.3877787807814457e-16 0.019889655186859145" rpy="0 0 0"/>
+    <mass value="${mass_scale * 1.985969318800872}"/>
+    <inertia ixx="${mass_scale * 0.001262}" iyy="${mass_scale * 0.001262}" izz="${mass_scale * 0.002}" ixy="${mass_scale * -0.0}" iyz="${mass_scale * -0.0}" ixz="${mass_scale * -0.0}"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.63 -0.175 -0.564" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/lidar_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.63 -0.175 -0.564" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/lidar_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Lwheel_1">
+  <inertial>
+    <origin xyz="-1.3322676295501878e-15 0.08206390404434488 -5.1209037010835345e-15" rpy="0 0 0"/>
+    <mass value="${mass_scale * 8.382217572864255}"/>
+    <inertia ixx="${mass_scale * 0.015003}" iyy="${mass_scale * 0.025627}" izz="${mass_scale * 0.015003}" ixy="${mass_scale * -0.0}" iyz="${mass_scale * -0.0}" ixz="${mass_scale * 0.0}"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.575 -0.35 -0.08" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/Lwheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.575 -0.35 -0.08" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/Lwheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Rwheel_1">
+  <inertial>
+    <origin xyz="-5.329070518200751e-15 -0.08206390404434344 -1.3877787807814457e-17" rpy="0 0 0"/>
+    <mass value="${mass_scale * 8.38221757286426}"/>
+    <inertia ixx="${mass_scale * 0.015003}" iyy="${mass_scale * 0.025627}" izz="${mass_scale * 0.015003}" ixy="${mass_scale * 0.0}" iyz="${mass_scale * -0.0}" ixz="${mass_scale * 0.0}"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.575 0.35 -0.08" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/Rwheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.575 0.35 -0.08" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/Rwheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Rcastor_1">
+  <inertial>
+    <origin xyz="0.0 -6.938893903907228e-17 -0.05224038461538458" rpy="0 0 0"/>
+    <mass value="${mass_scale * 2.3083166181516366}"/>
+    <inertia ixx="${mass_scale * 0.002636}" iyy="${mass_scale * 0.002636}" izz="${mass_scale * 0.000999}" ixy="${mass_scale * -0.0}" iyz="${mass_scale * 0.0}" ixz="${mass_scale * 0.0}"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.03 -0.03 -0.114" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/Rcastor_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.03 -0.03 -0.114" rpy="0 0 0"/>
+    <geometry>
+      <sphere radius="0.04"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Lcastor_1">
+  <inertial>
+    <origin xyz="9.020562075079397e-17 2.7755575615628914e-16 -0.05224038461538455" rpy="0 0 0"/>
+    <mass value="${mass_scale * 2.3083166181516366}"/>
+    <inertia ixx="${mass_scale * 0.002636}" iyy="${mass_scale * 0.002636}" izz="${mass_scale * 0.000999}" ixy="${mass_scale * 0.0}" iyz="${mass_scale * 0.0}" ixz="${mass_scale * 0.0}"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.03 -0.32 -0.114" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/Lcastor_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.03 -0.32 -0.114" rpy="0 0 0"/>
+    <geometry>
+      <sphere radius="0.04"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="realsense_1">
+  <inertial>
+    <origin xyz="0.0012109179006365434 -1.942890293094024e-15 5.551115123125783e-16" rpy="0 0 0"/>
+    <mass value="${mass_scale * 0.0249231351631883}"/>
+    <inertia ixx="${mass_scale * 1.3e-05}" iyy="${mass_scale * 1e-06}" izz="${mass_scale * 1.3e-05}" ixy="${mass_scale * 0.0}" iyz="${mass_scale * -0.0}" ixz="${mass_scale * -0.0}"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.675 -0.175 -0.50975" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/realsense_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.675 -0.175 -0.50975" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find delivbot)/meshes/realsense_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="lidar" type="fixed">
+  <origin xyz="0.63 0.175 0.564" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="lidar_1"/>
+</joint>
+
+<joint name="Lwheel" type="continuous">
+  <origin xyz="0.575 0.35 0.08" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="Lwheel_1"/>
+  <axis xyz="0.0 1.0 -0.0"/>
+</joint>
+
+<joint name="Rwheel" type="continuous">
+  <origin xyz="0.575 -0.35 0.08" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="Rwheel_1"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+<joint name="Rcastor" type="fixed">
+  <origin xyz="0.03 0.03 0.114" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="Rcastor_1"/>
+</joint>
+
+<joint name="Lcastor" type="fixed">
+  <origin xyz="0.03 0.32 0.114" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="Lcastor_1"/>
+</joint>
+
+<joint name="realsense" type="fixed">
+  <origin xyz="0.675 0.175 0.50975" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="realsense_1"/>
+</joint>
+
+</robot>
