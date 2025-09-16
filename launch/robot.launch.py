@@ -187,12 +187,27 @@ def generate_launch_description():
         }.items(),
     )
 
+    lidar_static_tf_node = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='lidar_static_tf',
+        arguments=["0.63", "0.175", "0.564", "0", "0", "0", "base_link", "hesai_lidar"],
+    )
+    camera_static_tf_node = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='camera_static_tf',
+        arguments=["0.675", "0.175", "0.50975", "0", "0", "0", "base_link", "camera_link"],
+    )
+
     launch_items.extend([
         twist_mux_node,
         lidar_launch,
         realsense_launch,
         odrive_launch,
         joystick_launch,
+        lidar_static_tf_node,
+        camera_static_tf_node,
     ])
 
     return LaunchDescription(launch_items)

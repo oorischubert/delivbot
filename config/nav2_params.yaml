@@ -1,0 +1,234 @@
+amcl:
+  ros__parameters:
+    use_sim_time: false
+    scan_topic: scan
+    robot_model_type: nav2_amcl::DifferentialMotionModel
+    odom_frame_id: odom
+    base_frame_id: base_link
+    global_frame_id: map
+    tf_broadcast: true
+    max_particles: 2000
+    min_particles: 500
+    update_min_d: 0.2
+    update_min_a: 0.2
+    resample_interval: 2
+    laser_model_type: likelihood_field
+    lambda_short: 0.1
+    sigma_hit: 0.2
+    z_hit: 0.5
+    z_short: 0.05
+    z_max: 0.05
+    z_rand: 0.5
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    do_beamskip: true
+
+bt_navigator:
+  ros__parameters:
+    use_sim_time: false
+    global_frame: map
+    robot_base_frame: base_link
+    transform_tolerance: 0.2
+    planner_plugins: [GridBased]
+    controller_plugins: [FollowPath]
+    default_nav_through_poses_bt_xml: "navigate_to_pose_w_replanning_and_recovery.xml"
+    default_nav_to_pose_bt_xml: "navigate_to_pose_w_replanning_and_recovery.xml"
+
+controller_server:
+  ros__parameters:
+    use_sim_time: false
+    controller_frequency: 20.0
+    min_x_velocity_threshold: 0.01
+    min_y_velocity_threshold: 0.0
+    min_theta_velocity_threshold: 0.01
+    failure_tolerance: 0.3
+    odom_topic: odometry/filtered
+    cmd_vel_topic: cmd_vel
+    progress_checker_plugin: progress_checker
+    goal_checker_plugins: [goal_checker]
+    controller_plugins: [FollowPath]
+
+    progress_checker:
+      plugin: nav2_controller::SimpleProgressChecker
+      required_movement_radius: 0.2
+      movement_time_allowance: 10.0
+
+    goal_checker:
+      plugin: nav2_controller::SimpleGoalChecker
+      xy_goal_tolerance: 0.15
+      yaw_goal_tolerance: 0.15
+      stateful: true
+
+    FollowPath:
+      plugin: nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+      lookahead_dist: 0.6
+      max_lookahead_dist: 1.0
+      min_lookahead_dist: 0.3
+      lookahead_time: 1.5
+      desired_linear_vel: 0.75
+      max_linear_accel: 1.0
+      max_angular_accel: 3.2
+      min_approach_linear_velocity: 0.05
+      allow_reversing: false
+      use_rotate_to_heading: true
+      rotate_to_heading_angular_vel: 1.0
+      regulated_linear_scaling_min_radius: 0.4
+      regulated_linear_scaling_min_speed: 0.1
+      use_cost_regulated_linear_velocity_scaling: true
+      use_velocity_scaled_lookahead_dist: true
+      use_approach_velocity_scaling: true
+      approach_velocity_scaling_dist: 0.6
+      inflation_cost_scaling_factor: 3.0
+      transform_tolerance: 0.2
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      use_sim_time: false
+      global_frame: map
+      robot_base_frame: base_link
+      resolution: 0.05
+      track_unknown_space: true
+      publish_frequency: 2.0
+      update_frequency: 5.0
+      rolling_window: false
+      width: 50.0
+      height: 50.0
+      origin_x: -25.0
+      origin_y: -25.0
+      transform_tolerance: 0.5
+      footprint: [[0.6, 0.4], [0.6, -0.4], [-0.6, -0.4], [-0.6, 0.4]]
+      plugins: [static_layer, obstacle_layer, inflation_layer]
+
+      static_layer:
+        plugin: nav2_costmap_2d::StaticLayer
+        map_subscribe_transient_local: true
+
+      obstacle_layer:
+        plugin: nav2_costmap_2d::ObstacleLayer
+        observation_sources: pointcloud
+        pointcloud:
+          topic: /lidar/points
+          max_obstacle_height: 3.0
+          min_obstacle_height: -1.0
+          clearing: true
+          marking: true
+          data_type: PointCloud2
+          expected_update_rate: 0.0
+          observation_persistence: 0.0
+          obstacle_range: 25.0
+          raytrace_max_range: 30.0
+
+      inflation_layer:
+        plugin: nav2_costmap_2d::InflationLayer
+        inflation_radius: 0.8
+        cost_scaling_factor: 3.0
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      use_sim_time: false
+      global_frame: odom
+      robot_base_frame: base_link
+      resolution: 0.05
+      track_unknown_space: false
+      publish_frequency: 5.0
+      update_frequency: 10.0
+      rolling_window: true
+      width: 6.0
+      height: 6.0
+      transform_tolerance: 0.2
+      footprint: [[0.6, 0.4], [0.6, -0.4], [-0.6, -0.4], [-0.6, 0.4]]
+      plugins: [obstacle_layer, inflation_layer]
+
+      obstacle_layer:
+        plugin: nav2_costmap_2d::ObstacleLayer
+        observation_sources: pointcloud
+        pointcloud:
+          topic: /lidar/points
+          max_obstacle_height: 3.0
+          min_obstacle_height: -1.0
+          clearing: true
+          marking: true
+          data_type: PointCloud2
+          expected_update_rate: 0.0
+          observation_persistence: 0.0
+          obstacle_range: 15.0
+          raytrace_max_range: 20.0
+
+      inflation_layer:
+        plugin: nav2_costmap_2d::InflationLayer
+        inflation_radius: 0.6
+        cost_scaling_factor: 3.0
+
+planner_server:
+  ros__parameters:
+    use_sim_time: false
+    expected_planner_frequency: 1.0
+    planner_plugins: [GridBased]
+
+    GridBased:
+      plugin: nav2_navfn_planner/NavfnPlanner
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
+
+recoveries_server:
+  ros__parameters:
+    use_sim_time: false
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    recovery_plugins: [spin, backup, wait]
+    spin:
+      plugin: nav2_recoveries/Spin
+    backup:
+      plugin: nav2_recoveries/BackUp
+    wait:
+      plugin: nav2_recoveries/Wait
+
+smoother_server:
+  ros__parameters:
+    use_sim_time: false
+    smoother_plugins: [simple_smoother]
+
+    simple_smoother:
+      plugin: nav2_smoother::SimpleSmoother
+      tolerance: 1.0e-2
+      max_its: 1000
+      do_refinement: true
+
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: false
+    smoothing_frequency: 20.0
+    scale_velocities: true
+    max_velocity: [1.0, 0.0, 2.0]
+    min_velocity: [0.0, 0.0, 0.0]
+    max_accel: [0.8, 0.0, 2.5]
+    max_decel: [0.8, 0.0, 2.5]
+    odom_topic: odometry/filtered
+    odom_duration: 0.5
+
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: false
+    plugin_lib_names: [wait_at_waypoint]
+
+    wait_at_waypoint:
+      plugin: nav2_waypoint_follower::WaitAtWaypoint
+      enabled: true
+      waypoint_duration: 2.0
+
+lifecycle_manager:
+  ros__parameters:
+    use_sim_time: false
+    autostart: true
+    node_names: ["controller_server",
+                 "planner_server",
+                 "recoveries_server",
+                 "bt_navigator",
+                 "smoother_server",
+                 "velocity_smoother",
+                 "waypoint_follower"]

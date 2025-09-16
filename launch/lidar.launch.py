@@ -16,9 +16,19 @@ def launch_setup(context, *args, **kwargs):
         'use_sim_time': use_sim_time.lower() in ('true', '1', 'yes')
     }]
 
+    # Force Hesai driver to use host/ROS time by default (can be overridden in YAML)
+    hesai_time_params = {
+        # Try both the flat key and the fully-qualified (nested) key used by Hesai's YAML
+        # so the driver definitely picks up host/ROS time.
+        'use_timestamp_type': 1,                  # 0: device time, 1: host/ROS time
+        'enable_packet_loss_tool': False
+    }
+
     if params_file:
         parameters.append(os.path.expanduser(params_file))
-
+        
+    parameters.append(hesai_time_params)
+    
     lidar_node = Node(
         package='hesai_ros_driver',
         executable='hesai_ros_driver_node',
@@ -26,6 +36,8 @@ def launch_setup(context, *args, **kwargs):
         name=node_name,
         output='screen',
         parameters=parameters,
+        remappings=[('/lidar_points', '/lidar/points')],
+        arguments=['--ros-args', '--log-level', 'warn'],
     )
 
     return [lidar_node]
@@ -40,7 +52,7 @@ def generate_launch_description():
 
     declare_node_name = DeclareLaunchArgument(
         'node_name',
-        default_value='hesai_lidar',
+        default_value='hesai_ros_driver_node',
         description='Node name for the Hesai lidar driver.'
     )
 

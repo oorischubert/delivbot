@@ -26,6 +26,13 @@ def launch_setup(context, *args, **kwargs):
         name=camera_name,
         output='screen',
         parameters=parameters,
+        remappings=[
+            ('/realsense_camera/color/image_raw', '/realsense/image'),
+            ('/realsense_camera/color/camera_info', '/realsense/camera_info'),
+            ('/realsense_camera/depth/image_rect_raw', '/realsense/depth_image'),
+            ('/realsense_camera/depth/camera_info', '/realsense/depth_camera_info'),
+            ('/realsense_camera/depth/color/points', '/realsense/points'),
+        ],
     )
 
     return [camera_node]

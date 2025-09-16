@@ -178,3 +178,17 @@ def generate_launch_description():
             twist_mux,
         ]
     )
+    
+# export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/humble/lib/
+# ps aux | grep gzserver   <- reset background segmentation fault
+
+#warehouse world launch:
+# ros2 launch delivbot gazebo.launch.py world:=$HOME/ros2_ws/src/aws-robomaker-small-warehouse-world/worlds/no_roof_small_warehouse/no_roof_small_warehouse.world
+#house world launch:
+# ros2 launch delivbot gazebo.launch.py world:=$HOME/ros2_ws/src/aws-robomaker-small-house-world/worlds/small_house.world
+#bookstore world launch:
+# ros2 launch delivbot gazebo.launch.py world:=$HOME/ros2_ws/src/aws-robomaker-bookstore-world/worlds/bookstore.world
+
+#git clone -b ros2 https://github.com/aws-robotics/aws-robomaker-small-warehouse-world.git 
+#git clone -b ros2 https://github.com/aws-robotics/aws-robomaker-small-house-world.git
+#git clone -b ros2 https://github.com/aws-robotics/aws-robomaker-bookstore-world.git
