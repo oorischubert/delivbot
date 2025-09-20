@@ -48,6 +48,44 @@ ros2 launch delivbot display.launch.py
 - Enable/drive with left trigger (button 6) held.
 - Turbo speed with right trigger (button 7).
 
+## SLAM and Mapping (lidarslam_ros2)
+
+The default SLAM stack now wraps [lidarslam_ros2](https://github.com/rsasaki0109/lidarslam_ros2), which performs scan-matching SLAM with optional IMU fusion and a graph-based loop-closure back-end.
+
+Prerequisites:
+- Clone `lidarslam_ros2` into your workspace so the packages `scanmatcher`, `graph_based_slam`, `lidarslam`, and `lidarslam_msgs` build alongside this robot package.
+- Provide a point cloud on `/lidar/points` (the Gazebo bridge already publishes this) and optionally an IMU on `/imu` (see `imu.launch.py` and the Gazebo IMU sensor).
+
+Start SLAM:
+
+```bash
+ros2 launch delivbot slam.launch.py
+```
+
+Key launch arguments (override as needed):
+- `pointcloud_topic` (default `/lidar/points`)
+- `imu_topic` (default `/imu`)
+- `use_imu` (`true` to fuse IMU, `false` to ignore it)
+- `initial_pose_topic` (default `initial_pose` if you have a PoseStamped publisher)
+- `params_file` (defaults to `config/lidarslam_params.yaml`)
+- `auto_initial_pose` (`true` publishes a PoseStamped automatically; disable if you want to set it manually)
+- `initial_pose_{x,y,z,qx,qy,qz,qw,delay}` (override the auto-published pose)
+
+RViz quickstart:
+- Fixed frame: `map`
+- Add `Pose` display for `/current_pose`, `Path` for `/path`, and `PointCloud2` for `/map` (global accumulated cloud).
+- Loop-closed results appear on `/modified_path` and `/modified_map`.
+
+To produce a 2D occupancy grid suitable for Nav2, run the projection pipeline:
+
+```bash
+ros2 launch delivbot grid_projection.launch.py
+```
+
+This wraps `octomap_server` to consume the `/map` point cloud and publish `/map` (occupancy grid) plus `/octomap_*` topics. Adjust parameters in `config/octomap_params.yaml` if you need different z-bounds or resolution.
+
+The core SLAM tuning lives in `config/lidarslam_params.yaml`. Modify voxel sizes, registration method (NDT/GICP), scan ranges, and loop-closure thresholds there as you iterate.
+
 ## Real Robot Bring-Up
 
 `robot.launch.py` runs the physical robot stack while keeping Gazebo assets untouched. It loads the URDF, publishes TFs, launches joystick teleop, and can selectively start the hardware drivers.
@@ -105,6 +143,7 @@ Ensure the following packages/drivers are available in your workspace or install
 - `odrive_hoverboard`
 - `joy`, `teleop_twist_joy`
 - `twist_mux`
+- `scanmatcher`, `graph_based_slam`, `lidarslam`, `lidarslam_msgs` (from `lidarslam_ros2`)
 
 Refer to each dependency’s documentation for hardware setup (e.g., USB permissions for RealSense cameras and ODrive).
 

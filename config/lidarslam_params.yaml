@@ -1,0 +1,39 @@
+scan_matcher:
+  ros__parameters:
+    global_frame_id: "map"
+    robot_frame_id: "base_link"
+    registration_method: "GICP"
+    ndt_resolution: 1.0
+    ndt_num_threads: 4
+    gicp_corr_dist_threshold: 2.0
+    trans_for_mapupdate: 0.2
+    vg_size_for_input: 0.25
+    vg_size_for_map: 0.10
+    use_min_max_filter: true
+    scan_min_range: 0.3
+    scan_max_range: 25.0
+    scan_period: 0.1
+    map_publish_period: 1.0
+    num_targeted_cloud: 25
+    set_initial_pose: false
+    odom_frame_id: "odom"
+    publish_tf: true
+    use_imu: true
+    use_odom: true
+    debug_flag: false
+    use_initial_pose: false
+
+graph_based_slam:
+  ros__parameters:
+    registration_method: "NDT"
+    ndt_resolution: 0.6
+    ndt_num_threads: 4
+    voxel_leaf_size: 0.2
+    loop_detection_period: 500
+    threshold_loop_closure_score: 0.6
+    distance_loop_closure: 15.0
+    range_of_searching_loop_closure: 15.0
+    search_submap_num: 3
+    num_adjacent_pose_cnstraints: 5
+    use_save_map_in_loop: false
+    debug_flag: false

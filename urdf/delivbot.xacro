@@ -162,6 +162,36 @@
   <child link="lidar_1"/>
 </joint>
 
+<!-- IMU link positioned 0.40 m below the lidar joint location -->
+<link name="imu">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.05"/>
+    <inertia ixx="1e-4" iyy="1e-4" izz="1e-4" ixy="0" ixz="0" iyz="0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="0.04 0.02 0.01"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="0.04 0.02 0.01"/>
+    </geometry>
+  </collision>
+  
+</link>
+
+<joint name="imu_joint" type="fixed">
+  <!-- Base link to IMU at lidar xyz with z-0.40 -->
+  <origin xyz="0.63 0.175 0.164" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="imu"/>
+</joint>
+
 <joint name="Lwheel" type="continuous">
   <origin xyz="0.575 0.35 0.08" rpy="0 0 0"/>
   <parent link="base_link"/>

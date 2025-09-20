@@ -1,0 +1,20 @@
+octomap_server:
+  ros__parameters:
+    frame_id: map
+    base_frame_id: base_link
+    use_sim_time: false
+    resolution: 0.1
+    # Limit input cloud to a manageable height band around the robot
+    pointcloud_min_z: -0.5
+    pointcloud_max_z: 2.0
+    sensor_model/max_range: 25.0
+    sensor_model/hit: 0.7
+    sensor_model/miss: 0.4
+    sensor_model/min: 0.12
+    sensor_model/max: 0.97
+    # Publish a 2D projection suitable as a Nav2 static map
+    publish_2d_map: true
+    project_2d_map: true
+    incremental_2d_map_update: true
+    # Topics
+    cloud_in: /map

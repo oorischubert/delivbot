@@ -76,6 +76,12 @@ def generate_launch_description():
         description='Launch the ODrive hoverboard driver when true.'
     )
 
+    declare_launch_imu = DeclareLaunchArgument(
+        'launch_imu',
+        default_value='true',
+        description='Launch the BNO055 IMU driver when true.'
+    )
+
     declare_launch_joystick = DeclareLaunchArgument(
         'launch_joystick',
         default_value='true',
@@ -112,6 +118,12 @@ def generate_launch_description():
         description='Optional YAML parameters file for the ODrive driver.'
     )
 
+    declare_imu_params = DeclareLaunchArgument(
+        'imu_params_file',
+        default_value=os.path.join(pkg_share, 'config', 'bno055.yaml'),
+        description='YAML parameters file for the BNO055 IMU driver.'
+    )
+
     declare_cmd_vel_topic = DeclareLaunchArgument(
         'cmd_vel_topic',
         default_value='/cmd_vel',
@@ -125,12 +137,14 @@ def generate_launch_description():
         declare_launch_lidar,
         declare_launch_realsense,
         declare_launch_odrive,
+        declare_launch_imu,
         declare_launch_joystick,
         declare_joy_dev,
         declare_joystick_params,
         declare_lidar_params,
         declare_realsense_params,
         declare_odrive_params,
+        declare_imu_params,
         declare_cmd_vel_topic,
         OpaqueFunction(function=robot_state_publisher_setup),
     ]
@@ -177,6 +191,16 @@ def generate_launch_description():
         }.items(),
     )
 
+    imu_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(pkg_share, 'launch', 'imu.launch.py')),
+        condition=IfCondition(LaunchConfiguration('launch_imu')),
+        launch_arguments={
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'params_file': LaunchConfiguration('imu_params_file'),
+        }.items(),
+    )
+
     joystick_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_share, 'launch', 'joystick.launch.py')),
         condition=IfCondition(LaunchConfiguration('launch_joystick')),
@@ -205,6 +229,7 @@ def generate_launch_description():
         lidar_launch,
         realsense_launch,
         odrive_launch,
+        imu_launch,
         joystick_launch,
         lidar_static_tf_node,
         camera_static_tf_node,

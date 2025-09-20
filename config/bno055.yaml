@@ -1,0 +1,24 @@
+bno055:
+  ros__parameters:
+    # Transport
+    i2c_mode: true
+    i2c_bus: 1           # Adjust for your hardware (e.g. Jetson=1, RPi=1)
+    i2c_address: 0x28    # Default BNO055 address (0x28); alt is 0x29
+
+    # Frames
+    frame_id: imu
+
+    # Output settings
+    publish_tf: false
+    use_imu_msg: true
+    use_mag_msg: true
+    use_temp_msg: true
+    use_grav_msg: true
+
+    # Operating mode: NDOF is fused orientation
+    operation_mode: "NDOF"
+
+    # Rates (driver may cap to supported frequency)
+    rate: 100.0
+    use_sim_time: false
+

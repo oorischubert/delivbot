@@ -66,3 +66,11 @@
   ros_type_name: "sensor_msgs/msg/JointState"
   gz_type_name: "gz.msgs.Model"
   direction: GZ_TO_ROS
+
+# IMU (Gazebo → ROS2)
+- ros_topic_name: "/imu"
+  gz_topic_name: "/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
+  
