@@ -12,6 +12,8 @@ def launch_setup(context, *args, **kwargs):
     params_file = LaunchConfiguration('params_file').perform(context)
     cmd_vel_topic = LaunchConfiguration('cmd_vel_topic').perform(context)
     use_sim_time = LaunchConfiguration('use_sim_time').perform(context)
+    
+    odrive_package_name = 'delivbot_odrive'
 
     parameters = [{
         'cmd_vel_topic': cmd_vel_topic,
@@ -26,7 +28,7 @@ def launch_setup(context, *args, **kwargs):
         remappings.append(('/cmd_vel', cmd_vel_topic))
 
     odrive_node = Node(
-        package='odrive_hoverboard',
+        package=odrive_package_name,
         executable='driver',
         namespace=namespace,
         name=node_name,
@@ -47,7 +49,7 @@ def generate_launch_description():
 
     declare_node_name = DeclareLaunchArgument(
         'node_name',
-        default_value='odrive_hoverboard',
+        default_value='delivbot_odrive',
         description='Node name for the ODrive hoverboard driver.'
     )
 

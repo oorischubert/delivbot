@@ -119,7 +119,7 @@ Joystick commands flow through `twist_mux` so `/cmd_vel_joy` and navigation topi
 | `launch_joystick` | `true` | Toggle joystick + teleop_twist pipeline. |
 | `lidar_params_file` | `` (empty) | Optional YAML file for `hesai_ros_driver`. |
 | `realsense_params_file` | `` (empty) | Optional YAML file for `realsense2_camera`. |
-| `odrive_params_file` | `` (empty) | Optional YAML file for `odrive_hoverboard`. |
+| `odrive_params_file` | `` (empty) | Optional YAML file for `delivbot_odrive`. |
 | `cmd_vel_topic` | `/cmd_vel` | Velocity command topic for the ODrive driver (also used by twist_mux output). |
 
 ### Subsystem Launch Files
@@ -128,7 +128,7 @@ Joystick commands flow through `twist_mux` so `/cmd_vel_joy` and navigation topi
 | ----------- | ----------- | ----- |
 | `launch/lidar.launch.py` | Starts `hesai_ros_driver_node`. | Supports namespace, params, and `use_sim_time`. |
 | `launch/realsense.launch.py` | Starts `realsense2_camera_node`. | Provide a params YAML to customize camera streams. |
-| `launch/odrive.launch.py` | Starts the `odrive_hoverboard` driver executable. | Exposes `cmd_vel_topic` and optional params YAML for tuning. |
+| `launch/odrive.launch.py` | Starts the `delivbot_odrive` driver executable. | Exposes `cmd_vel_topic` and optional params YAML for tuning. |
 | `launch/joystick.launch.py` | Starts `joy_node` and `teleop_twist_joy`. | Publishes `cmd_vel_joy`, which feeds the twist mux. |
 
 Each subsystem launch file mirrors the `ros2 run` commands you would call manually, adding ergonomic launch arguments for consistent configuration.
