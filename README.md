@@ -66,6 +66,7 @@ Key launch arguments (override as needed):
 - `pointcloud_topic` (default `/lidar/points`)
 - `imu_topic` (default `/imu`)
 - `use_imu` (`true` to fuse IMU, `false` to ignore it)
+- `use_odom` (set to `true` to fuse wheel odometry when available; defaults to `false` so SLAM still works without odom)
 - `initial_pose_topic` (default `initial_pose` if you have a PoseStamped publisher)
 - `params_file` (defaults to `config/lidarslam_params.yaml`)
 - `auto_initial_pose` (`true` publishes a PoseStamped automatically; disable if you want to set it manually)

@@ -18,7 +18,7 @@ scan_matcher:
     set_initial_pose: false
     odom_frame_id: "odom"
     publish_tf: true
-    use_imu: true
+    use_imu: false
     use_odom: true
     debug_flag: false
     use_initial_pose: false

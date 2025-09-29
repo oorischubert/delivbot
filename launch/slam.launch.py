@@ -2,7 +2,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -22,6 +22,7 @@ def generate_launch_description():
     base_frame = LaunchConfiguration('base_frame')
     map_frame = LaunchConfiguration('map_frame')
     use_imu = LaunchConfiguration('use_imu')
+    use_odom = LaunchConfiguration('use_odom')
     initial_pose_topic = LaunchConfiguration('initial_pose_topic')
     auto_initial_pose = LaunchConfiguration('auto_initial_pose')
     initial_pose_x = LaunchConfiguration('initial_pose_x')
@@ -58,8 +59,12 @@ def generate_launch_description():
         description='Global map frame id.'
     )
     declare_use_imu = DeclareLaunchArgument(
-        'use_imu', default_value='true',
+        'use_imu', default_value='false',
         description='Set false to disable IMU fusion in scan matcher.'
+    )
+    declare_use_odom = DeclareLaunchArgument(
+        'use_odom', default_value='true',
+        description='Set true to use wheel odometry as an initial guess when available.'
     )
     declare_initial_pose = DeclareLaunchArgument(
         'initial_pose_topic', default_value='initial_pose',
@@ -99,6 +104,7 @@ def generate_launch_description():
         'global_frame_id': map_frame,
         'robot_frame_id': base_frame,
         'use_imu': use_imu,
+        'use_odom': use_odom,
     }
 
     scan_params = RewrittenYaml(
@@ -152,22 +158,26 @@ def generate_launch_description():
         qw = initial_pose_qw.perform(context)
         delay = float(initial_pose_delay.perform(context))
 
-        msg = (
-            "{header: {frame_id: %s}, pose: {position: {x: %s, y: %s, z: %s}, "
-            "orientation: {x: %s, y: %s, z: %s, w: %s}}}"
-        ) % (frame, x, y, z, qx, qy, qz, qw)
-
-        cmd = [
-            'ros2', 'topic', 'pub', '--once',
-            topic,
-            'geometry_msgs/PoseStamped',
-            msg,
-        ]
+        params = {
+            'topic': topic,
+            'frame_id': frame,
+            'x': float(x),
+            'y': float(y),
+            'z': float(z),
+            'qx': float(qx),
+            'qy': float(qy),
+            'qz': float(qz),
+            'qw': float(qw),
+            'delay': float(delay),
+        }
 
         return [
-            TimerAction(
-                period=delay,
-                actions=[ExecuteProcess(cmd=cmd, output='screen')]
+            Node(
+                package='delivbot',
+                executable='initial_pose_publisher',
+                name='auto_initial_pose',
+                output='screen',
+                parameters=[params],
             )
         ]
 
@@ -181,6 +191,7 @@ def generate_launch_description():
         declare_base_frame,
         declare_map_frame,
         declare_use_imu,
+        declare_use_odom,
         declare_initial_pose,
         declare_auto_initial_pose,
         declare_initial_pose_x,
@@ -193,7 +204,7 @@ def generate_launch_description():
         declare_initial_pose_delay,
         scanmatcher_node,
         backend_node,
-        initial_pose_action,
+        #initial_pose_action,
     ])
 
 # Package:
